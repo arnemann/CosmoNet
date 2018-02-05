@@ -24,7 +24,7 @@ Model = {
 }
 
 RUNPARAM={
-	"num_epoch": 1,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
+	"num_epoch": 500,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
         "require_improvement": 50,      #if with require_improvement, there is no improvement in validation error, then stop running. 
 	"num_train":400,                #total number of simulations for training
 	"num_val":50,                   #total number of simulations for validation
@@ -40,12 +40,12 @@ RUNPARAM['iter_test'] = RUNPARAM['num_test']*64/Input_Test['BATCH_SIZE']
 
 Path={
 	"init_data" :  '.',                 #Path where the init data is
-        "Model_path" : '/zfsauton/home/siyuh/result',                 #Path to save the best model where the validation error is the smallest. And then we use this model for test
-        "train_data" : '/zfsauton/home/siyuh/data/train/',            #path where the  train data is
-	"train_result" : '/zfsauton/home/siyuh/result/',        #path to store the train result
-	"val_data" : '/zfsauton/home/siyuh/data/valid/',              #path where the  validation data is
-	"val_result" : '/zfsauton/home/siyuh/result',          #path to store the validation result
-	"test_data" : '/zfsauton/home/siyuh/data/test/',              #path where the  test data is
-	"test_result" : '/zfsauton/home/siyuh/result/'           #path to store the test result
+        "Model_path" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',                 #Path to save the best model where the validation error is the smallest. And then we use this model for test
+        "train_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/train/',            #path where the  train data is
+	"train_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',        #path to store the train result
+	"val_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/val/',              #path where the  validation data is
+	"val_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',          #path to st/data0/jamesarnemann/cosmoNet/orig_paper/result/'ore the validation result
+	"test_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/test/',              #path where the  test data is
+	"test_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',           #path to store the test result
 
 }  

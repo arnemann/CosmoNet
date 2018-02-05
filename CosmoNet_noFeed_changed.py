@@ -41,11 +41,11 @@ class CosmoNet:
         self.W = {}
         self.b = {}
         self.bn_param = {}
-        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 2],'w1')
-	self.b['b_conv1'] = bias_variable([2])
-	self.W['W_conv2'] = weight_variable([4, 4, 4, 2, 12],'w2')
-	self.b['b_conv2'] = bias_variable([12])
-	self.W['W_conv3'] = weight_variable([4,4,4,12,64],'w3')
+        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 16],'w1')
+	self.b['b_conv1'] = bias_variable([16])
+	self.W['W_conv2'] = weight_variable([4, 4, 4, 16, 32],'w2')
+	self.b['b_conv2'] = bias_variable([32])
+	self.W['W_conv3'] = weight_variable([4,4,4,32,64],'w3')
 	self.b['b_conv3'] = bias_variable([64])
 	self.W['W_conv4'] = weight_variable([3,3,3,64,64],'w4')
 	self.b['b_conv4'] = bias_variable([64])
