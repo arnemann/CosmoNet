@@ -49,15 +49,26 @@ class CosmoNet:
 	self.b['b_conv3'] = bias_variable([64])
 	self.W['W_conv4'] = weight_variable([3,3,3,64,64],'w4')
 	self.b['b_conv4'] = bias_variable([64])
+
+
+
         self.W['W_conv5'] = weight_variable([2,2,2,64,128],'w5')
         self.b['b_conv5'] = bias_variable([128])
+
 	self.W['W_conv6'] = weight_variable([2,2,2,128,128],'w6')
 	self.b['b_conv6'] = bias_variable([128])
-	self.W['W_fc1'] = weight_variable([1024,1024],'w7')
+
+
+
+	self.W['W_conv7'] = weight_variable([2,2,2,128,128*2],'w7')
+	self.b['b_conv7'] = bias_variable([128*2])
+
+
+	self.W['W_fc1'] = weight_variable([128*8*2,1024],'w8')
         self.b['b_fc1'] = bias_variable([1024])
-	self.W['W_fc2'] = weight_variable([1024,256],'w8')
+	self.W['W_fc2'] = weight_variable([1024,256],'w9')
         self.b['b_fc2'] = bias_variable([256])
-	self.W['W_fc3'] = weight_variable([256,2],'w9')
+	self.W['W_fc3'] = weight_variable([256,2],'w10')
         self.b['b_fc3'] = bias_variable([2])
 
     #Define some fuctions that might be used   
@@ -71,42 +82,60 @@ class CosmoNet:
         # First convolutional layer
         with tf.name_scope('conv1'):
             h_conv1 = lrelu(self.BatchNorm(tf.nn.conv3d(inputBatch,self.W['W_conv1'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv1'],IS_TRAINING = IS_TRAINING, scope = scope+str(1), reuse = reuse),hp.Model['LEAK_PARAMETER'])
+            print 'hconv1', h_conv1.shape
         
 	with tf.name_scope('pool1'):
             h_pool1 = tf.nn.avg_pool3d(h_conv1, ksize=[1,2,2,2,1], strides = [1,2,2,2,1], padding = 'VALID')
+            print 'h_pool1', h_pool1.shape
             
         #Second convoluational layer
         with tf.name_scope('conv2'):
             h_conv2 = lrelu(self.BatchNorm(tf.nn.conv3d(h_pool1, self.W['W_conv2'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv2'],IS_TRAINING=IS_TRAINING,scope = scope+str(2),reuse = reuse),hp.Model['LEAK_PARAMETER'])
+            print 'hconv2', h_conv2.shape
             
         with tf.name_scope('pool2'):
             h_pool2 = tf.nn.avg_pool3d(h_conv2, ksize=[1,2,2,2,1], strides = [1,2,2,2,1], padding = 'VALID')
+            print 'h_pool2', h_pool2.shape
         
         #Third convoluational layer
         with tf.name_scope('conv3'):
             h_conv3 = lrelu(self.BatchNorm(tf.nn.conv3d(h_pool2, self.W['W_conv3'],strides = [1,2,2,2,1],padding = 'VALID') + self.b['b_conv3'],IS_TRAINING=IS_TRAINING, scope = scope+str(3),reuse=reuse),hp.Model['LEAK_PARAMETER'])
+            print 'hconv3', h_conv3.shape
         
         #Fourth convoluational layer
         with tf.name_scope('conv4'):
             h_conv4 = lrelu(self.BatchNorm(tf.nn.conv3d(h_conv3, self.W['W_conv4'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv4'],IS_TRAINING=IS_TRAINING,scope = scope+str(4),reuse=reuse),hp.Model['LEAK_PARAMETER'])
+            print 'hconv4', h_conv4.shape
         
+
         #Fifth convolutional layer
         with tf.name_scope('conv5'):
             h_conv5 = lrelu(self.BatchNorm(tf.nn.conv3d(h_conv4, self.W['W_conv5'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv5'],IS_TRAINING=IS_TRAINING,scope = scope+str(5),reuse=reuse),hp.Model['LEAK_PARAMETER'])
-            
+            print 'hconv5', h_conv5.shape
+
         #Sixth convolutional layer
-        with tf.name_scope('conv6'):
-            h_conv6 = lrelu(self.BatchNorm(tf.nn.conv3d(h_conv5, self.W['W_conv6'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv6'],IS_TRAINING=IS_TRAINING,scope = scope+str(6),reuse=reuse),hp.Model['LEAK_PARAMETER'])
+#        with tf.name_scope('conv6'):
+#            h_conv6 = lrelu(self.BatchNorm(tf.nn.conv3d(h_conv5, self.W['W_conv6'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv6'],IS_TRAINING=IS_TRAINING,scope = scope+str(6),reuse=reuse),hp.Model['LEAK_PARAMETER'])
+	
+        #Seventh convolutional layer
+        with tf.name_scope('conv7'):
+            h_conv7 = lrelu(self.BatchNorm(tf.nn.conv3d(h_conv5, self.W['W_conv7'],strides = [1,1,1,1,1],padding = 'VALID') + self.b['b_conv7'],IS_TRAINING=IS_TRAINING,scope = scope+str(7),reuse=reuse),hp.Model['LEAK_PARAMETER'])
+	    print 'hconv7', h_conv7.shape
+
         
         with tf.name_scope('fc1'):
-            h_conv6_flat = tf.reshape(h_conv6,[-1,1024])
-            h_fc1 = lrelu(tf.matmul(tf.nn.dropout(h_conv6_flat,keep_prob), self.W['W_fc1']) + self.b['b_fc1'],hp.Model['LEAK_PARAMETER'])
+            h_conv7_flat = tf.reshape(h_conv7,[-1,1024*2])
+	    print 'hconv7_flat', h_conv7_flat.shape
+            h_fc1 = lrelu(tf.matmul(tf.nn.dropout(h_conv7_flat,keep_prob), self.W['W_fc1']) + self.b['b_fc1'],hp.Model['LEAK_PARAMETER'])
+	    print 'hfc1', h_fc1.shape
         
         with tf.name_scope('fc2'):
             h_fc2 = lrelu(tf.matmul(tf.nn.dropout(h_fc1,keep_prob), self.W['W_fc2']) + self.b['b_fc2'],hp.Model['LEAK_PARAMETER'])
+	    print 'hfc2', h_fc2.shape
             
         with tf.name_scope('fc3'):
             h_fc3 = tf.matmul(tf.nn.dropout(h_fc2,keep_prob), self.W['W_fc3']) + self.b['b_fc3']
+	    print 'hfc3', h_fc3.shape
             return h_fc3
     
             
@@ -114,8 +143,8 @@ class CosmoNet:
         with tf.name_scope('loss'):
             predictions = self.deepNet(inputBatch = self.train_data,IS_TRAINING = True,keep_prob = hp.Model['DROP_OUT'],scope='conv_bn',reuse = None)
             lossL1 = tf.reduce_mean(tf.abs(self.train_label-predictions))
-            for w in self.W:
-                lossL1 += hp.Model["REG_RATE"]*tf.nn.l2_loss(self.W[w])/self.num_parameters
+            #for w in self.W:
+            #    lossL1 += hp.Model["REG_RATE"]*tf.nn.l2_loss(self.W[w])/self.num_parameters
             return lossL1
     
     def validation_loss(self):

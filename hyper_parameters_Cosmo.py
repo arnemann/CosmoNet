@@ -1,5 +1,5 @@
 Input = {
-        "BATCH_SIZE" : 40,              #mini-batch size for training and validation
+        "BATCH_SIZE" : 64,              #mini-batch size for training and validation
         "NUM_THREADS" : 2,              #number of threads to read data
         "CAPACITY" : 0,
         "MIN_AFTER_DEQUEUE" : 400       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
@@ -24,7 +24,7 @@ Model = {
 }
 
 RUNPARAM={
-	"num_epoch": 500,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
+	"num_epoch": 200,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
         "require_improvement": 50,      #if with require_improvement, there is no improvement in validation error, then stop running. 
 	"num_train":400,                #total number of simulations for training
 	"num_val":50,                   #total number of simulations for validation
