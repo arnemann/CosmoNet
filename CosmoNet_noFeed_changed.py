@@ -41,11 +41,11 @@ class CosmoNet:
         self.W = {}
         self.b = {}
         self.bn_param = {}
-        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 16],'w1')
-	self.b['b_conv1'] = bias_variable([16])
-	self.W['W_conv2'] = weight_variable([4, 4, 4, 16, 32],'w2')
-	self.b['b_conv2'] = bias_variable([32])
-	self.W['W_conv3'] = weight_variable([4,4,4,32,64],'w3')
+        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 2],'w1')
+	self.b['b_conv1'] = bias_variable([2])
+	self.W['W_conv2'] = weight_variable([4, 4, 4, 2, 12],'w2')
+	self.b['b_conv2'] = bias_variable([12])
+	self.W['W_conv3'] = weight_variable([4,4,4,12,64],'w3')
 	self.b['b_conv3'] = bias_variable([64])
 	self.W['W_conv4'] = weight_variable([3,3,3,64,64],'w4')
 	self.b['b_conv4'] = bias_variable([64])
@@ -55,16 +55,16 @@ class CosmoNet:
         self.W['W_conv5'] = weight_variable([2,2,2,64,128],'w5')
         self.b['b_conv5'] = bias_variable([128])
 
-	self.W['W_conv6'] = weight_variable([2,2,2,128,128],'w6')
-	self.b['b_conv6'] = bias_variable([128])
+#	self.W['W_conv6'] = weight_variable([2,2,2,128,128],'w6')
+#	self.b['b_conv6'] = bias_variable([128])
 
 
 
-	self.W['W_conv7'] = weight_variable([2,2,2,128,128*2],'w7')
-	self.b['b_conv7'] = bias_variable([128*2])
+	self.W['W_conv7'] = weight_variable([2,2,2,128,128],'w7')
+	self.b['b_conv7'] = bias_variable([128])
 
 
-	self.W['W_fc1'] = weight_variable([128*8*2,1024],'w8')
+	self.W['W_fc1'] = weight_variable([128*8,1024],'w8')
         self.b['b_fc1'] = bias_variable([1024])
 	self.W['W_fc2'] = weight_variable([1024,256],'w9')
         self.b['b_fc2'] = bias_variable([256])
@@ -124,7 +124,7 @@ class CosmoNet:
 
         
         with tf.name_scope('fc1'):
-            h_conv7_flat = tf.reshape(h_conv7,[-1,1024*2])
+            h_conv7_flat = tf.reshape(h_conv7,[-1,1024])
 	    print 'hconv7_flat', h_conv7_flat.shape
             h_fc1 = lrelu(tf.matmul(tf.nn.dropout(h_conv7_flat,keep_prob), self.W['W_fc1']) + self.b['b_fc1'],hp.Model['LEAK_PARAMETER'])
 	    print 'hfc1', h_fc1.shape
@@ -268,11 +268,11 @@ class CosmoNet:
 	    	
 
 if __name__ == "__main__":
-    NbodySimuDataBatch64, NbodySimuLabelBatch64 = readDataSet(filenames = [hp.Path['train_data']+str(i)+'.tfrecord' for i in range(0,400)])
+    NbodySimuDataBatch64, NbodySimuLabelBatch64 = readDataSet(filenames = [hp.Path['train_data']+str(i)+'.tfrecord' for i in range(0,(hyper_parameters_Cosmo.RUNPARAM["num_train"]))])
     NbodySimuDataBatch32, NbodySimuLabelBatch32 = tf.cast(NbodySimuDataBatch64,tf.float32),tf.cast(NbodySimuLabelBatch64,tf.float32)
-    valDataBatch64, valLabelbatch64 = readDataSet(filenames=[hp.Path['val_data']+'/'+str(i)+".tfrecord" for i in range(400,450)]);
+    valDataBatch64, valLabelbatch64 = readDataSet(filenames=[hp.Path['val_data']+'/'+str(i)+".tfrecord" for i in range((hyper_parameters_Cosmo.RUNPARAM["num_train"]),(hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]))]);
     valDataBatch32, valLabelbatch32 = tf.cast(valDataBatch64,tf.float32),tf.cast(valLabelbatch64,tf.float32)
-    testDataBatch64, testLabelbatch64 = readTestSet(filenames=[hp.Path['test_data']+'/'+str(i)+".tfrecord" for i in range(450,499)]);
+    testDataBatch64, testLabelbatch64 = readTestSet(filenames=[hp.Path['test_data']+'/'+str(i)+".tfrecord" for i in range((hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]),(hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]+hyper_parameters_Cosmo.RUNPARAM["num_test"]))]);
     testDataBatch32, testLabelbatch32 = tf.cast(testDataBatch64,tf.float32),tf.cast(testLabelbatch64,tf.float32)
     trainCosmo = CosmoNet(train_data=NbodySimuDataBatch32,train_label=NbodySimuLabelBatch32,val_data=valDataBatch32,val_label=valLabelbatch32,test_data=testDataBatch32,test_label=testLabelbatch32,is_train=True, is_test=True)
     trainCosmo.train()

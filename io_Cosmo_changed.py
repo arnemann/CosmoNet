@@ -150,12 +150,12 @@ def readTestSet(filenames):
 
 if __name__ == '__main__':
     order = np.random.permutation(64*hyper_parameters_Cosmo.RUNPARAM["num_train"])
-    order = np.split(np.append(order,np.arange(64*hyper_parameters_Cosmo.RUNPARAM["num_train"],64*(hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]+hyper_parameters_Cosmo.RUNPARAM["num_test"]))),(hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]+hyper_parameters_Cosmo.RUNPARAM["num_test"]))
+    order = np.split(np.append(order,np.arange(64*hyper_parameters_Cosmo.RUNPARAM["num_train"],64*(hyper_parameters_Cosmo.RUNPARAM["num_train"]+e = j%64)),(hyper_parameters_Cosmo.RUNPARAM["num_train"]+e = j%64)
     
-    label_path = os.path.join('/zfsauton/home/siyuh/256_64','basics_infos_1000_1499.txt')
+    label_path = os.path.join('/zfsauton/home/siyuh/256_64','basics_infos_1000_1(hyper_parameters_Cosmo.RUNPARAM["num_train"]+e = j%64.txt')
     labels = np.loadtxt(label_path,delimiter=',')    
        
-    for i in range(0,(hyper_parameters_Cosmo.RUNPARAM["num_train"]+hyper_parameters_Cosmo.RUNPARAM["num_val"]+hyper_parameters_Cosmo.RUNPARAM["num_test"])):
+    for i in range(0,(hyper_parameters_Cosmo.RUNPARAM["num_train"]+):
         data = []
         label = []
         for j in order[i]:
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         loadNpyData(data.reshape(-1,64,64,64,1),label.reshape(-1,2),i).convert_to()
     
     '''
-    NbodySimu, NbodyLabel = readTestSet(filenames=[str(hyper_parameters_Cosmo.RUNPARAM["num_train"])+".tfrecord",str(hyper_parameters_Cosmo.RUNPARAM["num_train"]+1)+".tfrecord"])
+    NbodySimu, NbodyLabel = readTestSet(filenames=[str(hyper_parameters_Cosmo.RUNPARAM["num_train"])+".tfrecord",str(hyper_parameters_Cosmo.RUNPARAM["num_train"])+".tfrecord"])
     with tf.Session() as sess:
 	sess.run(tf.global_variables_initializer())
         coord = tf.train.Coordinator();

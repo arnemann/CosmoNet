@@ -1,5 +1,7 @@
+magic_number = 64
+
 Input = {
-        "BATCH_SIZE" : 64,              #mini-batch size for training and validation
+        "BATCH_SIZE" : 40,              #mini-batch size for training and validation
         "NUM_THREADS" : 2,              #number of threads to read data
         "CAPACITY" : 0,
         "MIN_AFTER_DEQUEUE" : 400       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
@@ -24,7 +26,7 @@ Model = {
 }
 
 RUNPARAM={
-	"num_epoch": 200,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
+	"num_epoch": 100,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
         "require_improvement": 50,      #if with require_improvement, there is no improvement in validation error, then stop running. 
 	"num_train":400,                #total number of simulations for training
 	"num_val":50,                   #total number of simulations for validation
@@ -34,18 +36,29 @@ RUNPARAM={
         "iter_test":0                 
 }
 
-RUNPARAM["batch_per_epoch"] = RUNPARAM['num_train']*64/Input['BATCH_SIZE']
-RUNPARAM["batch_per_epoch_val"] = RUNPARAM['num_val']*64/Input['BATCH_SIZE']
-RUNPARAM['iter_test'] = RUNPARAM['num_test']*64/Input_Test['BATCH_SIZE']
+RUNPARAM["batch_per_epoch"] = RUNPARAM['num_train']*magic_number/Input['BATCH_SIZE']
+RUNPARAM["batch_per_epoch_val"] = RUNPARAM['num_val']*magic_number/Input['BATCH_SIZE']
+RUNPARAM['iter_test'] = RUNPARAM['num_test']*magic_number/Input_Test['BATCH_SIZE']
+
+#target_dir = "new_data_2"
+#main_dir = '/data1/jamesarnemann/cosmoNet/'
+target_dir = "orig_paper"
+main_dir = '/data0/jamesarnemann/cosmoNet/'
+
+#target_path = 
+#results = 
+
+
 
 Path={
+
 	"init_data" :  '.',                 #Path where the init data is
-        "Model_path" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',                 #Path to save the best model where the validation error is the smallest. And then we use this model for test
-        "train_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/train/',            #path where the  train data is
-	"train_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',        #path to store the train result
-	"val_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/val/',              #path where the  validation data is
-	"val_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',          #path to st/data0/jamesarnemann/cosmoNet/orig_paper/result/'ore the validation result
-	"test_data" : '/data0/jamesarnemann/cosmoNet/orig_paper/data/test/',              #path where the  test data is
-	"test_result" : '/data0/jamesarnemann/cosmoNet/orig_paper/result/',           #path to store the test result
+        "Model_path" : main_dir + target_dir + '/result/',                 #Path to save the best model where the validation error is the smallest. And then we use this model for test
+        "train_data" : main_dir + target_dir + '/data/train/',            #path where the  train data is
+	"train_result" : main_dir + target_dir + '/result/',        #path to store the train result
+	"val_data" : main_dir + target_dir + '/data/val/',              #path where the  validation data is
+	"val_result" : main_dir + target_dir + '/result/',          #path to st/data0/jamesarnemann/cosmoNet/' + target_dir + '/result/'ore the validation result
+	"test_data" : main_dir + target_dir + '/data/test/',              #path where the  test data is
+	"test_result" : main_dir + target_dir + '/result/',           #path to store the test result
 
 }  
