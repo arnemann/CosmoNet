@@ -1,10 +1,17 @@
 magic_number = 64
 
+DATAPARAM={
+        "output_dim" : 3,
+        "zsAVG" : [0.3, 0.8628, 0.701],
+        "zsSTD" : [0.02853, 0.04887, 0.05691]
+        #"zsAVG": [2.995679839999998983e-01,8.610806619999996636e-01],
+        #"zsSTD": [2.905168635566176411e-02,4.023372385668218254e-02]
+        }
 Input = {
         "BATCH_SIZE" : 40,              #mini-batch size for training and validation
         "NUM_THREADS" : 2,              #number of threads to read data
         "CAPACITY" : 0,
-        "MIN_AFTER_DEQUEUE" : 400       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
+        "MIN_AFTER_DEQUEUE" : 60       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
         }
 
 Input["CAPACITY"] = Input["BATCH_SIZE"]*4 + Input["MIN_AFTER_DEQUEUE"]
@@ -21,7 +28,7 @@ Input_Test["CAPACITY"] = Input_Test["BATCH_SIZE"]*4 + Input_Test["MIN_AFTER_DEQU
 Model = {
         "REG_RATE": 0.,                 #regularization of weights: currently set to 0 since batch_normalization has the same effect of regularization
         "LEAK_PARAMETER": 0.01,         #leaky parameter for leaky relu
-        "LEARNING_RATE" : 0.0001,       #adam_optimizer to do the update. 
+        "LEARNING_RATE" : 0.005,       #adam_optimizer to do the update. 
         "DROP_OUT": 0.5                 #apply drop out in fully connected layer. this value gives the probabilty of keep the node. 
 }
 
@@ -42,8 +49,9 @@ RUNPARAM['iter_test'] = RUNPARAM['num_test']*magic_number/Input_Test['BATCH_SIZE
 
 #target_dir = "new_data_2"
 #main_dir = '/data1/jamesarnemann/cosmoNet/'
-target_dir = "orig_paper"
-main_dir = '/data0/jamesarnemann/cosmoNet/'
+target_dir = "new_data_3_param_1"
+
+main_dir = '/data1/jamesarnemann/cosmoNet/'
 
 #target_path = 
 #results = 
