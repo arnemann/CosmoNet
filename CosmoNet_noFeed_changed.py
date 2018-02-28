@@ -10,6 +10,8 @@ import time
 #        initial = tf.truncated_normal(shape, stddev=0.1)
 #        return tf.Variable(initial)
 
+zscored_average = hp.DATAPARAM['zsAVG']
+zscored_std = hp.DATAPARAM['zsSTD']
 
 def weight_variable(shape,name):
 	W = tf.get_variable(name,shape=shape, initializer=tf.contrib.layers.xavier_initializer())
@@ -24,7 +26,7 @@ def lrelu(x, alpha):
 
 
 class CosmoNet:
-    def __init__(self,train_data,train_label, val_data = None, val_label = None, test_data = None, test_label = None, is_train = None, is_test = None):
+    def __init__(self,train_data,train_label, val_data = None, val_label = None, test_data = None, test_label = None, is_train = None, is_test = None, save_path = None):
         self.train_data = train_data
         self.train_label = train_label
         self.val_data = val_data
@@ -33,7 +35,7 @@ class CosmoNet:
 	self.test_label = test_label
 	self.is_train = is_train
 	self.is_test = is_test
-        
+        self.save_path = save_path
         #self.num_parameters = 3*3*3*1*2+4*4*4*2*12+4*4*4*12*64+3*3*3*64*64+2*2*2*64*128+2*2*2*128*12+1024*1024+1024*256+256*2
         self.num_parameters = 1
 
@@ -41,11 +43,11 @@ class CosmoNet:
         self.W = {}
         self.b = {}
         self.bn_param = {}
-        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 2],'w1')
-	self.b['b_conv1'] = bias_variable([2])
-	self.W['W_conv2'] = weight_variable([4, 4, 4, 2, 12],'w2')
-	self.b['b_conv2'] = bias_variable([12])
-	self.W['W_conv3'] = weight_variable([4,4,4,12,64],'w3')
+        self.W['W_conv1'] = weight_variable([3, 3, 3, 1, 16],'w1')
+	self.b['b_conv1'] = bias_variable([16])
+	self.W['W_conv2'] = weight_variable([4, 4, 4, 16, 32],'w2')
+	self.b['b_conv2'] = bias_variable([32])
+	self.W['W_conv3'] = weight_variable([4,4,4,32,64],'w3')
 	self.b['b_conv3'] = bias_variable([64])
 	self.W['W_conv4'] = weight_variable([3,3,3,64,64],'w4')
 	self.b['b_conv4'] = bias_variable([64])
@@ -68,8 +70,8 @@ class CosmoNet:
         self.b['b_fc1'] = bias_variable([1024])
 	self.W['W_fc2'] = weight_variable([1024,256],'w9')
         self.b['b_fc2'] = bias_variable([256])
-	self.W['W_fc3'] = weight_variable([256,2],'w10')
-        self.b['b_fc3'] = bias_variable([2])
+	self.W['W_fc3'] = weight_variable([256,3],'w10')
+        self.b['b_fc3'] = bias_variable([3])
 
     #Define some fuctions that might be used   
     
@@ -149,22 +151,22 @@ class CosmoNet:
     
     def validation_loss(self):
         val_predict = self.deepNet(inputBatch = self.val_data,IS_TRAINING = False,keep_prob = 1,scope='conv_bn',reuse=True)
-        val_predict = val_predict*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
-        val_true = self.val_label*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
+        val_predict = val_predict*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
+        val_true = self.val_label*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
         lossL1Val = tf.reduce_mean(tf.abs(val_true-val_predict)/val_true)
         return lossL1Val,val_true,val_predict
 
     def train_loss(self):
 	train_predict = self.deepNet(inputBatch = self.train_data,IS_TRAINING = False,keep_prob = 1,scope='conv_bn',reuse=True)
-        train_predict = train_predict*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
-        train_true = self.train_label*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
+        train_predict = train_predict*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
+        train_true = self.train_label*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
         lossL1Train = tf.reduce_mean(tf.abs(train_true-train_predict)/train_true)
 	return lossL1Train,train_true,train_predict
 
     def test_loss(self):
         test_predict = self.deepNet(inputBatch = self.test_data,IS_TRAINING = False,keep_prob = 1,scope='conv_bn',reuse=True)
-        test_predict = test_predict*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
-        test_true = self.test_label*tf.constant([2.905168635566176411e-02,4.023372385668218254e-02],dtype = tf.float32)+tf.constant([2.995679839999998983e-01,8.610806619999996636e-01],dtype = tf.float32)
+        test_predict = test_predict*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
+        test_true = self.test_label*tf.constant(zscored_std,dtype = tf.float32)+tf.constant(zscored_average,dtype = tf.float32)
         lossL1Test = tf.reduce_mean(tf.abs(test_true-test_predict)/test_true)
         return lossL1Test,test_true,test_predict
 
@@ -247,6 +249,11 @@ class CosmoNet:
                 coord.join(threads);
 
 	if(self.is_test):
+		if(self.is_train == False):
+			save_path = os.path.join(hp.Path['Model_path'], 'best_validation')
+		if self.save_path != None:
+			save_path = self.save_path
+
 		with tf.Session() as sess:
 	    		saver.restore(sess=sess,save_path=save_path)
 			coord = tf.train.Coordinator()
@@ -263,6 +270,7 @@ class CosmoNet:
                 	coord.request_stop()
 			coord.join(threads)
    
+
 
 	    
 	    	

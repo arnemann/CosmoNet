@@ -11,7 +11,7 @@ Input = {
         "BATCH_SIZE" : 40,              #mini-batch size for training and validation
         "NUM_THREADS" : 2,              #number of threads to read data
         "CAPACITY" : 0,
-        "MIN_AFTER_DEQUEUE" : 60       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
+        "MIN_AFTER_DEQUEUE" : 400       #the minimum number in the queue after dequeue (Min_after_dequeue and capacity together determines the shuffling of input data)
         }
 
 Input["CAPACITY"] = Input["BATCH_SIZE"]*4 + Input["MIN_AFTER_DEQUEUE"]
@@ -28,12 +28,12 @@ Input_Test["CAPACITY"] = Input_Test["BATCH_SIZE"]*4 + Input_Test["MIN_AFTER_DEQU
 Model = {
         "REG_RATE": 0.,                 #regularization of weights: currently set to 0 since batch_normalization has the same effect of regularization
         "LEAK_PARAMETER": 0.01,         #leaky parameter for leaky relu
-        "LEARNING_RATE" : 0.005,       #adam_optimizer to do the update. 
+        "LEARNING_RATE" : 0.0001,       #adam_optimizer to do the update. 
         "DROP_OUT": 0.5                 #apply drop out in fully connected layer. this value gives the probabilty of keep the node. 
 }
 
 RUNPARAM={
-	"num_epoch": 100,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
+	"num_epoch": 1,              #each epoch means a fully pass over the data. The program might stop before running num_epoch (see next line).        
         "require_improvement": 50,      #if with require_improvement, there is no improvement in validation error, then stop running. 
 	"num_train":400,                #total number of simulations for training
 	"num_val":50,                   #total number of simulations for validation
@@ -51,7 +51,7 @@ RUNPARAM['iter_test'] = RUNPARAM['num_test']*magic_number/Input_Test['BATCH_SIZE
 #main_dir = '/data1/jamesarnemann/cosmoNet/'
 target_dir = "new_data_3_param_1"
 
-main_dir = '/data1/jamesarnemann/cosmoNet/'
+main_dir = '/data0/jamesarnemann/cosmoNet/'
 
 #target_path = 
 #results = 

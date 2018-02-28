@@ -76,7 +76,8 @@ def read_tfrecord(filename_queue):
     label = tf.reshape(labelDecode,[3])
     ###
     ### 0.3, 0.02853, 0.8628, 0.04887, 0.701,0.05691
-    label = (label - tf.constant([3.0e-01,8.628e-01,7.01e-01],dtype = tf.float64))/tf.constant([2.8353e-02,4.887e-02,5.691e-02],dtype = tf.float64)
+    label = (label - tf.constant(hyper_parameters_Cosmo.DATAPARAM['zsAVG'],dtype = tf.float64))/tf.constant(hyper_parameters_Cosmo.DATAPARAM['zsSTD']
+,dtype = tf.float64)
     return NbodySimuAddDim,label
     
 def readDataSet(filenames):
@@ -115,7 +116,8 @@ def read_test_tfrecord(filename_queue):
     NbodySimuAddDim = tf.expand_dims(NbodySimus,3)
     label = tf.reshape(labelDecode,[3])
     ### 0.3, 0.02853, 0.8628, 0.04887, 0.701,0.05691
-    labelAddDim = (label - tf.constant([3.00e-01,8.628e-01,7.01e-01],dtype = tf.float64))/tf.constant([2.853e-02,4.887e-02,5.691e-02],dtype = tf.float64)
+    labelAddDim = (label - tf.constant(hyper_parameters_Cosmo.DATAPARAM['zsAVG'],dtype = tf.float64))/tf.constant(hyper_parameters_Cosmo.DATAPARAM['zsSTD']
+,dtype = tf.float64)
     print NbodySimuAddDim.shape
    
 
@@ -155,5 +157,5 @@ if __name__ == '__main__':
             data_path = os.path.join('/global/cscratch1/sd/djbard/cosmoML/NbodySimu/',str('01')+str(numDirectory).rjust(3,'0'),str(numFile)+'.npy')
             data = np.append(data,np.load(data_path))
             label = np.append(label,labels[numDirectory][[1,4]])
-        loadNpyData(data.reshape(-1,64,64,64,1),label.reshape(-1,2),i).convert_to()
+        loadNpyData(data.reshape(-1,64,64,64,1),label.reshape(-1,3),i).convert_to()
     
